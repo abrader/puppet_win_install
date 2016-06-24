@@ -2,11 +2,11 @@
 [CmdletBinding()]
 
 Param(
-  [string]$server      = "<%= @server_setting %>",
-  [string]$certname    = $null,
-  [string]$install_dest    = "install.ps1.eps",
-  [string]$install_src  = 'https://raw.githubusercontent.com/trevharmon/puppet-pe_install_ps1/METHOD-653/templates/install.ps1.erb',
-  [string]$install_log = "$env:temp\puppet-install.log"
+  [string]$server        = "<%= @server_setting %>",
+  [string]$certname      = $null,
+  [string]$install_dest  = "$env:temp\install.ps1.eps",
+  [string]$install_src   = 'https://raw.githubusercontent.com/trevharmon/puppet-pe_install_ps1/METHOD-653/templates/install.ps1.erb',
+  [string]$install_log   = "$env:temp\puppet-install.log"
 )
 # Uncomment the following line to enable debugging messages
 # $DebugPreference = 'Continue'
