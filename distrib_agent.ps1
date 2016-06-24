@@ -9,4 +9,9 @@ Param(
   [string]$install_log = "$env:temp\puppet-install.log"
 )
 # Uncomment the following line to enable debugging messages
-#$DebugPreference = 'Continue'
+$DebugPreference = 'Continue'
+
+$name = 'ABCD'
+
+Write-Verbose 'Render template.'
+EPS-Render -file test.eps
