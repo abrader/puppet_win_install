@@ -2,28 +2,43 @@
 [CmdletBinding()]
 
 Param(
-  [string]$server        = "<%= @server_setting %>",
-  [string]$certname      = $null,
-  [string]$install_dest  = "$env:temp\install.ps1.eps",
-  [string]$install_src   = 'https://raw.githubusercontent.com/trevharmon/puppet-pe_install_ps1/METHOD-653/templates/install.ps1.erb',
-  [string]$install_log   = "$env:temp\puppet-install.log"
+  # [string]$server        = "<%= @server_setting %>",
+  # [string]$certname      = $null,
+  [string]$agent_list     = $null,
+  [string]$install_script = 'install.ps1',
+  [string]$install_dest   = "$env:temp\$install_script",
+  [string]$puppet_master  = '192.168.1.188'
+  [string]$install_src    = "https://$puppet_master`:8140/packages/latest/install.ps1"
+  # [string]$install_log   = "$env:temp\puppet-install.log"
 )
 # Uncomment the following line to enable debugging messages
 # $DebugPreference = 'Continue'
 
-function DownloadInstallPS1 {
-  Write-Verbose "Downloading the install template on $env:COMPUTERNAME..."
+function DownloadAgentInstallPS1 {
+  Write-Output "Downloading the Puppet agent installer on $env:COMPUTERNAME..."
   [System.Net.ServicePointManager]::ServerCertificateValidationCallback={$true}
   $webclient = New-Object system.net.webclient
   try {
     $webclient.DownloadFile($install_src,$install_dest)
   }
   catch [Net.WebException] {
-    Write-Warning "Failed to download the install template: ${install_src}"
+    Write-Warning "Failed to download the Puppet agent installer script: ${install_src}"
     Write-Warning "$_"
     break
   }
 }
 
-Write-Verbose 'Download install template.'
-DownloadInstallPS1
+function Get-Puppet {
+  Write-Ouput 'Download install template.'
+  DownloadAgentInstallPS1
+}
+
+function Install-Puppet {
+  Get-Puppet
+  $ScriptPath = Split-Path $MyInvocation.MyCommand.Path
+  & "$ScriptPath/$install_script"
+}
+
+function Mass-Install-Puppet {
+  invoke-command -computername $agent_list {Install-Puppet}
+}
