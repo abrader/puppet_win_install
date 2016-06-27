@@ -7,8 +7,9 @@ Param(
   [string]$agent_list     = $null,
   [string]$install_script = 'install.ps1',
   [string]$install_dest   = "$env:temp\$install_script",
-  [string]$puppet_master  = '192.168.1.188'
-  [string]$install_src    = "https://$puppet_master`:8140/packages/latest/install.ps1"
+  [string]$pm_ipaddr      = '192.168.1.188',
+  [string]$pm_hostname    = 'master.puppetlabs.vm',
+  [string]$install_src    = "https://$pm_ipaddr`:8140/packages/current/install.ps1"
   # [string]$install_log   = "$env:temp\puppet-install.log"
 )
 # Uncomment the following line to enable debugging messages
@@ -28,8 +29,17 @@ function DownloadAgentInstallPS1 {
   }
 }
 
+function Get-Hostname {
+  Try {
+    $ips = [System.Net.Dns]::GetHostAddresses($pm_hostname)
+  }
+  Catch {
+    Write-Output "Unable to resolve hostname: $pm_hostname"
+  }
+}
+
 function Get-Puppet {
-  Write-Ouput 'Download install template.'
+  Write-Verbose 'Download install template.'
   DownloadAgentInstallPS1
 }
 
@@ -42,3 +52,6 @@ function Install-Puppet {
 function Mass-Install-Puppet {
   invoke-command -computername $agent_list {Install-Puppet}
 }
+
+Get-Puppet
+Get-Hostname
