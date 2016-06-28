@@ -2,8 +2,6 @@
 [CmdletBinding()]
 
 Param(
-  # [string]$server        = "<%= @server_setting %>",
-  # [string]$certname      = $null,
   [string]$agent_list     = $null,
   [string]$hosts_file     = "$env:windir\System32\drivers\etc\hosts",
   [string]$install_script = 'install.ps1',
@@ -32,13 +30,16 @@ function DownloadAgentInstallPS1 {
 
 function Set-Hostname {
   # Write out a hosts file record for Puppet Master
+  Write-Output "Setting hostname for $pm_ipaddr set to $pm_hostname."
   $pm_ipaddr + "`t`t" + $pm_hostname | Out-File -encoding ASCII -append $hosts_file
+  # Get-Hostname
 }
 
 function Get-Hostname {
   # Attempt to resolve hostname for Puppet Master
   Try {
     $ips = [System.Net.Dns]::GetHostAddresses($pm_hostname)
+    Write-Verbose "Host/DNS Record confirmed: $ips"
   }
   Catch {
     Write-Verbose "Unable to resolve hostname: $pm_hostname"
@@ -52,14 +53,27 @@ function Get-Puppet {
 }
 
 function Install-Puppet {
+  Get-Hostname
   Get-Puppet
   $ScriptPath = Split-Path $MyInvocation.MyCommand.Path
   & "$ScriptPath/$install_script"
 }
 
-function Mass-Install-Puppet {
-  invoke-command -computername $agent_list {Install-Puppet}
+function Test-Remote ([string] $agent) {
+
 }
 
-Get-Puppet
-Get-Hostname
+function Mass-Install-Puppet {
+  foreach ($agent in $agent_list) {
+    if (Test-Connection -Computername $agent -Quiet) {
+      if (Test-WSMan -ComputerName $agent -Authentication Default -ErrorAction Ignore) {
+        Invoke-Command -Computername $agent -ScriptBlock {Install-Puppet}
+      }
+      else {
+        Write-Warning "Unable to contact remote computer: $agent"
+      }
+    }
+  }
+}
+
+Mass-Install-Puppet
