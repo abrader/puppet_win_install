@@ -5,9 +5,10 @@ Param(
   # [string]$server        = "<%= @server_setting %>",
   # [string]$certname      = $null,
   [string]$agent_list     = $null,
+  [string]$hosts_file     = "$env:windir\System32\drivers\etc\hosts",
   [string]$install_script = 'install.ps1',
   [string]$install_dest   = "$env:temp\$install_script",
-  [string]$pm_ipaddr      = '192.168.1.188',
+  [string]$pm_ipaddr      = '192.168.1.207',
   [string]$pm_hostname    = 'master.puppetlabs.vm',
   [string]$install_src    = "https://$pm_ipaddr`:8140/packages/current/install.ps1"
   # [string]$install_log   = "$env:temp\puppet-install.log"
@@ -29,12 +30,19 @@ function DownloadAgentInstallPS1 {
   }
 }
 
+function Set-Hostname {
+  # Write out a hosts file record for Puppet Master
+  $pm_ipaddr + "`t`t" + $pm_hostname | Out-File -encoding ASCII -append $hosts_file
+}
+
 function Get-Hostname {
+  # Attempt to resolve hostname for Puppet Master
   Try {
     $ips = [System.Net.Dns]::GetHostAddresses($pm_hostname)
   }
   Catch {
-    Write-Output "Unable to resolve hostname: $pm_hostname"
+    Write-Verbose "Unable to resolve hostname: $pm_hostname"
+    Set-Hostname
   }
 }
 
