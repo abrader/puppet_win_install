@@ -1,4 +1,4 @@
-# install_pa.ps1 : This powershell script instructs multiple machines on network to install the Puppet agent
+# install_pa.ps1 : This powershell script that downloads and executes the Puppet Agent install script.
 [CmdletBinding()]
 
 Param(
