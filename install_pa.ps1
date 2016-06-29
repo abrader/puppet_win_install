@@ -1,15 +1,13 @@
-# distrib_agent.ps1 : This powershell script instructs multiple machines on network to install the Puppet agent
+# install_pa.ps1 : This powershell script instructs multiple machines on network to install the Puppet agent
 [CmdletBinding()]
 
 Param(
-  [string]$agent_list     = $null,
   [string]$hosts_file     = "$env:windir\System32\drivers\etc\hosts",
   [string]$install_script = 'install.ps1',
   [string]$install_dest   = "$env:temp\$install_script",
   [string]$pm_ipaddr      = '192.168.1.207',
   [string]$pm_hostname    = 'master.puppetlabs.vm',
   [string]$install_src    = "https://$pm_ipaddr`:8140/packages/current/install.ps1"
-  # [string]$install_log   = "$env:temp\puppet-install.log"
 )
 # Uncomment the following line to enable debugging messages
 # $DebugPreference = 'Continue'
@@ -47,19 +45,6 @@ function Get-Hostname {
   }
 }
 
-function Add-Remote-Trusted-Host ([string]$hostname) {
-  $current_value = (get-item wsman:\\localhost\Client\TrustedHosts).value
-  if (($current_value -match $hostname) -eq $false) {
-    Write-Verbose "Adding TrustedHosts entry for remote agent: $hostname"
-    if ([string]::IsNullOrEmpty($current_value)) {
-      set-item wsman:\localhost\Client\TrustedHosts -value $hostname
-    }
-    else {
-      set-item wsman:\localhost\Client\TrustedHosts -value "$current_value, $hostname"
-    }
-  }
-}
-
 function Get-Puppet {
   Write-Verbose 'Download install template.'
   DownloadAgentInstallPS1
@@ -68,24 +53,7 @@ function Get-Puppet {
 function Install-Puppet {
   Get-Hostname
   Get-Puppet
-  $ScriptPath = Split-Path $MyInvocation.MyCommand.Path
-  & "$ScriptPath/$install_script"
+  & "$install_dest"
 }
 
-function Mass-Install-Puppet {
-  foreach ($agent in $agent_list) {
-    Add-Remote-Trusted-Host($agent)
-
-    if (Test-Connection -Computername $agent -Quiet) {
-      if (Test-WSMan -ComputerName $agent -Authentication Default -ErrorAction Ignore) {
-        # Invoke-Command -Computername $agent -ScriptBlock {Install-Puppet}
-        Invoke-Command -Computername $agent -FilePath "$PSScriptRoot/install_pa.ps1"
-      }
-      else {
-        Write-Warning "Unable to contact remote computer: $agent"
-      }
-    }
-  }
-}
-
-Mass-Install-Puppet
+Install-Puppet
