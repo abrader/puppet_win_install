@@ -43,7 +43,8 @@ function Mass-Install-Puppet {
 
     if (Test-Connection -Computername $agent -Quiet) {
       if (Test-WSMan -ComputerName $agent -Authentication Default -ErrorAction Ignore) {
-        Invoke-Command -ComputerName $agent {param($pm_hostname, $pm_ipaddr, $hosts_file, $install_script, $install_dest)} -FilePath "$PSScriptRoot/install_pa.ps1" -ArgumentList $PMHostname, $PMIpAddress
+        Invoke-Command -ComputerName $agent -FilePath "$PSScriptRoot/install_pa.ps1" -ArgumentList $PMHostname, $PMIpAddress
+        # {param($pm_hostname, $pm_ipaddr, $hosts_file, $install_script, $install_dest)}
       }
       else {
         Write-Warning "Unable to contact remote computer: $agent"
