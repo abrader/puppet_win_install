@@ -47,6 +47,19 @@ function Get-Hostname {
   }
 }
 
+function Add-Remote-Trusted-Host ([string]$hostname) {
+  $current_value = (get-item wsman:\\localhost\Client\TrustedHosts).value
+  if (($current_value -match $hostname) -eq $false) {
+    Write-Verbose "Adding TrustedHosts entry for remote agent: $hostname"
+    if ([string]::IsNullOrEmpty($current_value)) {
+      set-item wsman:\localhost\Client\TrustedHosts -value $hostname
+    }
+    else {
+      set-item wsman:\localhost\Client\TrustedHosts -value "$current_value, $hostname"
+    }
+  }
+}
+
 function Get-Puppet {
   Write-Verbose 'Download install template.'
   DownloadAgentInstallPS1
@@ -59,12 +72,10 @@ function Install-Puppet {
   & "$ScriptPath/$install_script"
 }
 
-function Test-Remote ([string] $agent) {
-
-}
-
 function Mass-Install-Puppet {
   foreach ($agent in $agent_list) {
+    Add-Remote-Trusted-Host($agent)
+
     if (Test-Connection -Computername $agent -Quiet) {
       if (Test-WSMan -ComputerName $agent -Authentication Default -ErrorAction Ignore) {
         Invoke-Command -Computername $agent -ScriptBlock {Install-Puppet}
