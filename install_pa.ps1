@@ -7,7 +7,7 @@ Param(
   [string]$install_dest   = "$env:temp\$install_script",
   [string]$pm_ipaddr      = '192.168.1.207',
   [string]$pm_hostname    = 'master.puppetlabs.vm',
-  [string]$install_src    = "https://$pm_ipaddr`:8140/packages/current/install.ps1"
+  [string]$install_src    = "https://$pm_hostname`:8140/packages/current/install.ps1"
 )
 # Uncomment the following line to enable debugging messages
 # $DebugPreference = 'Continue'
@@ -28,9 +28,8 @@ function DownloadAgentInstallPS1 {
 
 function Set-Hostname {
   # Write out a hosts file record for Puppet Master
-  Write-Output "Setting hostname for $pm_ipaddr set to $pm_hostname."
+  Write-Output "Creating host entry for $pm_hostname in $hosts_file."
   $pm_ipaddr + "`t`t" + $pm_hostname | Out-File -encoding ASCII -append $hosts_file
-  # Get-Hostname
 }
 
 function Get-Hostname {
@@ -53,7 +52,9 @@ function Get-Puppet {
 function Install-Puppet {
   Get-Hostname
   Get-Puppet
+  Write-Output "Running the Puppet agent installer on $env:COMPUTERNAME..."
   & "$install_dest"
+  Write-Output "Complete!"
 }
 
 Install-Puppet
