@@ -2,7 +2,8 @@
 [CmdletBinding()]
 
 Param(
-  [string]$agent_list     = $null
+  [string]$Agent     = $null,
+  [string]$FilePath  = 'agents.txt'
 )
 # Uncomment the following line to enable debugging messages
 # $DebugPreference = 'Continue'
@@ -21,6 +22,20 @@ function Add-Remote-Trusted-Host ([string]$hostname) {
 }
 
 function Mass-Install-Puppet {
+  # If user doesn't supply comma separated list on command line
+  if ([string]::IsNullOrEmpty($Agent)) {
+    if (Test-Path $FilePath) {
+      $agent_list = Get-Content $FilePath
+    }
+    else {
+      Write-Error -Message "You must either pass -Agent on the command line, -FilePath for a list of agents in a file, or the agents.txt file must exist." -Category InvalidArgument
+      Exit
+    }
+  }
+  else {
+    $agent_list = $Agent
+  }
+
   foreach ($agent in $agent_list) {
     Add-Remote-Trusted-Host($agent)
 
