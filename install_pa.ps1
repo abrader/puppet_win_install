@@ -2,11 +2,11 @@
 [CmdletBinding()]
 
 Param(
-  [string]$PMHostname     = $null,                                     # Puppet Master Hostname
-  [string]$PMIpAddress    = $null,                                     # Puppet Master IP Address
-  [string]$HostsFile      = "$env:windir\System32\drivers\etc\hosts",  # File containing host records
+  [string]$PMHostname    = $null,                                     # Puppet Master Hostname
+  [string]$PMIpAddress   = $null,                                     # Puppet Master IP Address
+  [string]$HostsFile     = "$env:windir\System32\drivers\etc\hosts",  # File containing host records
   [string]$InstallScript = 'install.ps1',                             # Name of PS1 script on Puppet Master
-  [string]$InstallDest   = "$env:temp\$install_script"                # Local directory for PS1 install script
+  [string]$InstallDest   = "$env:temp\$InstallScript"                # Local directory for PS1 install script
 )
 # Uncomment the following line to enable debugging messages
 # $DebugPreference = 'Continue'
@@ -31,7 +31,7 @@ function DownloadAgentInstallPS1 {
 
 function Set-Hostname {
   # Write out a hosts file record for Puppet Master
-  Write-Output "Creating host entry for $PMHostname in $hosts_file."
+  Write-Output "Creating host entry for $PMHostname in $HostsFile."
   $PMIpAddress + "`t`t" + $PMHostname | Out-File -encoding ASCII -append $HostsFile
 }
 
