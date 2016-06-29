@@ -55,9 +55,16 @@ function Get-Puppet {
 function Install-Puppet {
   Get-Hostname
   Get-Puppet
+
   Write-Output "Running the Puppet agent installer on $env:COMPUTERNAME..."
-  & "$InstallDest"
-  Write-Output "Successfully installed Puppet agent on $env:COMPUTERNAME"
+  try {
+    & "$InstallDest"
+    Write-Output "Successfully installed Puppet agent on $env:COMPUTERNAME"
+  }
+  catch {
+    Write-Warning "Unsuccessful install of Puppet agent on $env:COMPUTERNAME"
+    Write-Warning "$_"
+  }
 }
 
 Install-Puppet
