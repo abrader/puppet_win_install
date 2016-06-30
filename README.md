@@ -13,7 +13,7 @@
 ## _Overview_
 
 
-This is tool created to install Puppet agents in a distributed manner on Windows systems.  It uses [WinRM](https://msdn.microsoft.com/en-us/library/aa384426.aspx) to allow a local system to send a Powershell script to a remote system to be executed.  Aforementioned remote script downloads the latest version of the install script from the Puppet Master and executes the contents.
+This is tool created to install Puppet agents in a distributed manner on Windows systems.  It uses [WinRM](https://msdn.microsoft.com/en-us/library/aa384426.aspx) to allow a local system to send a PowerShell script to a remote system to be executed.  Aforementioned remote script downloads the latest version of the install script from the Puppet Master and executes the contents.
 
 ---
 
@@ -22,17 +22,22 @@ This is tool created to install Puppet agents in a distributed manner on Windows
 ### Single-agent:
 The Agent argument supports hostname or IP Address.
 
-    .\distrib_agent -Agent fqdn.example.com -PMHostname master.puppet.vm -PMIpAddress 192.168.1.66
+```PowerShell
+.\distrib_agent.ps1 -Agent fqdn.example.com -PMHostname master.puppet.vm -PMIpAddress 192.168.1.66
+```
 
 ### Multiple agents (using agents.txt)
 Placing the FQDN of each of the respective agents in a file called agents.txt in the working directory where the distrib_agent.ps1 executable will be run.
 
-    .\distrib_agent -PMHostname master.puppet.vm -PMIpAddress 192.168.1.66
-
+```PowerShell
+.\distrib_agent.ps1 -PMHostname master.puppet.vm -PMIpAddress 192.168.1.66
+```
 ### Multiple agents (using provided file)
 Placing the FQDN of each of the respective agents in a file and file path of your choosing then referencing said path with the FilePath argument.
 
-    .\distrib_agent -FilePath C:\ProgramData\agent_list.txt -PMHostname master.puppet.vm -PMIpAddress 192.168.1.66
+```PowerShell
+.\distrib_agent.ps1 -FilePath C:\ProgramData\agent_list.txt -PMHostname master.puppet.vm -PMIpAddress 192.168.1.66
+```
 
 ---
 
