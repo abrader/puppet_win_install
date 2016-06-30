@@ -15,7 +15,6 @@
 
 This is tool created to install Puppet agents in a distributed manner on Windows systems.  It uses [WinRM](https://msdn.microsoft.com/en-us/library/aa384426.aspx) to allow a local system to send a PowerShell script to a remote system to be executed.  Aforementioned remote script downloads the latest version of the install script from the Puppet Master and executes the contents.
 
----
 
 ## _Usage_
 
@@ -39,7 +38,6 @@ Placing the FQDN of each of the respective agents in a file and file path of you
 .\distrib_agent.ps1 -FilePath C:\ProgramData\agent_list.txt -PMHostname master.puppet.vm -PMIpAddress 192.168.1.66
 ```
 
----
 
 ## _Caveats_
 
@@ -50,13 +48,11 @@ If this is not a desired result, at the completion of the distributed install sc
 
 [Use PowerShell to clear the Trusted Hosts file](https://blogs.technet.microsoft.com/heyscriptingguy/2013/11/29/powertip-use-powershell-to-clear-the-trusted-hosts-file/)
 
----
 
 ## _License_
 
 [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
----
 
 ## _Contributing_
 
