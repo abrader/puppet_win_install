@@ -2,20 +2,23 @@
 [CmdletBinding()]
 
 Param(
-  [string]$hosts_file     = "$env:windir\System32\drivers\etc\hosts",
-  [string]$install_script = 'install.ps1',
-  [string]$install_dest   = "$env:temp\$install_script",
-  [string]$pm_ipaddr      = '192.168.1.207',
-  [string]$pm_hostname    = 'master.puppetlabs.vm',
-  [string]$install_src    = "https://$pm_hostname`:8140/packages/current/install.ps1"
+  [string]$pm_hostname    = $null,                                     # Puppet Master Hostname
+  [string]$pm_ipaddr      = $null,                                     # Puppet Master IP Address
+  [string]$hosts_file     = "$env:windir\System32\drivers\etc\hosts",  # File containing host records
+  [string]$install_script = 'install.ps1',                             # Name of PS1 script on Puppet Master
+  [string]$install_dest   = "$env:temp\$install_script"                # Local directory for PS1 install script
 )
 # Uncomment the following line to enable debugging messages
 # $DebugPreference = 'Continue'
 
 function DownloadAgentInstallPS1 {
   Write-Output "Downloading the Puppet agent installer on $env:COMPUTERNAME..."
+
+  $install_src = "https://$pm_hostname`:8140/packages/current/install.ps1"
+
   [System.Net.ServicePointManager]::ServerCertificateValidationCallback={$true}
   $webclient = New-Object system.net.webclient
+
   try {
     $webclient.DownloadFile($install_src,$install_dest)
   }

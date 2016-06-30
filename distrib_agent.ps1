@@ -2,8 +2,10 @@
 [CmdletBinding()]
 
 Param(
-  [string]$Agent     = $null,
-  [string]$FilePath  = 'agents.txt'
+  [string]$Agent       = $null,         # Singular Agent install
+  [string]$FilePath    = 'agents.txt',  # File containing hostnames of agents
+  [string]$PMHostname  = $null,         # Puppet Master Hostname
+  [string]$PMIpAddress = $null          # Puppet Master IP Address
 )
 # Uncomment the following line to enable debugging messages
 # $DebugPreference = 'Continue'
@@ -41,7 +43,7 @@ function Mass-Install-Puppet {
 
     if (Test-Connection -Computername $agent -Quiet) {
       if (Test-WSMan -ComputerName $agent -Authentication Default -ErrorAction Ignore) {
-        Invoke-Command -Computername $agent -FilePath "$PSScriptRoot/install_pa.ps1"
+        Invoke-Command -ComputerName $agent {param($pm_hostname, $pm_ipaddr, $hosts_file, $install_script, $install_dest)} -FilePath "$PSScriptRoot/install_pa.ps1" -ArgumentList $PMHostname, $PMIpAddress
       }
       else {
         Write-Warning "Unable to contact remote computer: $agent"
