@@ -3,6 +3,7 @@
 
 Param(
   [string]$Agent       = $null,         # Singular Agent install
+  [string]$Credential  = $null,         # Windows credentials
   [string]$FilePath    = 'agents.txt',  # File containing hostnames of agents
   [string]$PMHostname  = $null,         # Puppet Master Hostname
   [string]$PMIpAddress = $null          # Puppet Master IP Address
@@ -43,7 +44,12 @@ function Mass-Install-Puppet {
 
     if (Test-Connection -Computername $agent -Quiet) {
       if (Test-WSMan -ComputerName $agent -Authentication Default -ErrorAction Ignore) {
-        Invoke-Command -ComputerName $agent -FilePath "$PSScriptRoot/install_pa.ps1" -ArgumentList $PMHostname, $PMIpAddress
+        if ([string]::IsNullOrEmpty($Credential)) {
+          Invoke-Command -ComputerName $agent -FilePath "$PSScriptRoot/install_pa.ps1" -ArgumentList $PMHostname, $PMIpAddress
+        }
+        else {
+          Invoke-Command -ComputerName $agent -Credential $Credential -FilePath "$PSScriptRoot/install_pa.ps1" -ArgumentList $PMHostname, $PMIpAddress
+        }
       }
       else {
         Write-Warning "Unable to contact remote computer: $agent"

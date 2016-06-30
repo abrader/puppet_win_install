@@ -6,7 +6,7 @@ Param(
   [string]$PMIpAddress   = $null,                                     # Puppet Master IP Address
   [string]$HostsFile     = "$env:windir\System32\drivers\etc\hosts",  # File containing host records
   [string]$InstallScript = 'install.ps1',                             # Name of PS1 script on Puppet Master
-  [string]$InstallDest   = "$env:temp\$InstallScript"                # Local directory for PS1 install script
+  [string]$InstallDest   = "$env:temp\$InstallScript"                 # Local directory for PS1 install script
 )
 # Uncomment the following line to enable debugging messages
 # $DebugPreference = 'Continue'
