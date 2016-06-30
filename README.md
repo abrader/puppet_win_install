@@ -1,11 +1,13 @@
 # Distributed Puppet Agent installer for Windows
 
 ---
+
 * **Overview**
 * **Usage**
 * **Caveats**
 * **License**
 * **Contributing**
+
 ---
 
 ## _Overview_
