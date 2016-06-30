@@ -32,7 +32,15 @@ function DownloadAgentInstallPS1 {
 function Set-Hostname {
   # Write out a hosts file record for Puppet Master
   Write-Output "Creating host entry for $PMHostname in $HostsFile."
-  $PMIpAddress + "`t`t" + $PMHostname | Out-File -encoding ASCII -append $HostsFile
+  try {
+    $PMIpAddress + "`t`t" + $PMHostname | Out-File -encoding ASCII -append $HostsFile
+  }
+  catch {
+    Write-Warning "Unable to create host record for $PMHostname on $env:COMPUTERNAME."
+    Write-Warning "Puppet Agent install aborted for $env:COMPUTERNAME."
+    Write-Warning "$_"
+    break
+  }
 }
 
 function Get-Hostname {
