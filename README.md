@@ -1,10 +1,11 @@
 # Distributed Puppet Agent installer for Windows
 
 ---
-* ### Overview
-* ### Usage
-* ### Caveats
-* ### License
+* **Overview**
+* **Usage**
+* **Caveats**
+* **License**
+* **Contributing**
 ---
 
 ## _Overview_
@@ -57,5 +58,3 @@ We want to keep it as easy as possible to contribute changes so that our tools w
 Even though this guide is meant for Puppet modules, where applicable the same processes apply.
 
 Read the complete module [contribution guide](https://docs.puppetlabs.com/forge/contributing.html)
-
----
